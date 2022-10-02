@@ -14,3 +14,17 @@ ensure that the LabRole has the `Simple microservice permissions` in order to gr
 In this case I simply assigned the `AmazonDynamoDBFullAccess` policy to LabRole.
 
 Copy and paste the index.js code into the lambda function on the management console and press deploy
+
+
+### Part 2
+create the HTTP API using API Gateway 
+
+1) Sign in to API Gateway
+2) Choose create API then use the HTTP API build option.
+3) For API Name use crud-paper-api
+4) choose next
+5) skip configure routes and create the api
+
+#### b
+
+Create api routes
