@@ -28,3 +28,14 @@ create the HTTP API using API Gateway
 #### b
 
 Create api routes
+
+Choose Routes and Create route
+
+for each route we defined, simply add that route with the correct method. in this case, it was
+
+* `GET /papers/{id}`
+* `GET /papers`
+* `PUT /items`
+* `DELETE /items/{id}`
+
+Create an integration.
