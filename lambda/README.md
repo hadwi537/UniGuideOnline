@@ -12,3 +12,5 @@ Let the function name be crud-paper-function
 and the execution role be `LabRole`
 ensure that the LabRole has the `Simple microservice permissions` in order to grant the lambda function permission to interact with DynamoDB.
 In this case I simply assigned the `AmazonDynamoDBFullAccess` policy to LabRole.
+
+Copy and paste the index.js code into the lambda function on the management console and press deploy
