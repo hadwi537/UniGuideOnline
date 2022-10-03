@@ -2,26 +2,36 @@ import logo from './logo.svg';
 import './App.css';
 import React, { Component } from 'react'
 import Table from './components/table'
+import { v4 as uuid } from 'uuid';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+class App extends Component {
+
+  //state object contains properties for everything to store as state
+  state = {
+    data: [],
+    session_id: uuid(),
+  };
+
+
+
+  render() {
+
+    return (
+      <div className="App">
+
+        <div className='container' >
+        <h1> UniGuide! </h1>
+          <p> Visualising paper information </p>
+        </div>
+
+        <div className='container'>
+          
+          <Table />
+        </div>
+      </div>
+    );
+    }
+  }
 
 export default App;
