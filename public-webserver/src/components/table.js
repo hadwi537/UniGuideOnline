@@ -4,22 +4,21 @@ import axios from 'axios';
 // table header
 const TableHeader = () => {
     return (
-        <thread>
             <tr>
-                <th> Paper Code </th>
+                <th>Paper Code </th>
                 <th>Paper Title</th>
                 <th> Year </th>
                 <th> Prerequistes </th>
             </tr>
-        </thread>
     )
 }
 
 const TableBody = (props) => {
     const rows = props.paperData.map((paper) => {
+        console.log(paper.paper_code)
         return (
             <tr key = {paper.paper_code}>
-            <td> {paper.paper_code} </td>
+            <td>{paper.paper_code}</td>
             <td>{paper.title}</td>
             <td>{paper.year}</td>
             <td>{paper.prereq_list.map(paper_code => (
@@ -37,7 +36,7 @@ export default class Table extends React.Component {
     }
     componentDidMount() {
         axios.get('https://ijo4298cse.execute-api.us-east-1.amazonaws.com/papers').then(res => {
-            const reply = res.data;
+            const reply = res.data.Items;
             console.log(reply);
             this.setState({reply});
         });

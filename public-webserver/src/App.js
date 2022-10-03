@@ -26,7 +26,7 @@ class App extends Component {
         </div>
 
         <div className='container'>
-          
+
           <Table />
         </div>
       </div>
