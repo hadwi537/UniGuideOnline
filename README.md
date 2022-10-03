@@ -72,3 +72,10 @@ Check installed correctly with
 Then need to install the app using `npm install` while in the root dir of public-webserver
 
 We can then run npm-start and see page on localhost:3000
+
+### development
+
+Lifecycle outline:
+Make changes on local 
+Pull changes in ec2 instance
+recompile

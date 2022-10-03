@@ -41,6 +41,5 @@ for each route we defined, simply add that route with the correct method. in thi
 Create an integration.
 
 
-## TODO:
-
-generate keys
+### Invoke api
+uri = 'https://ijo4298cse.execute-api.us-east-1.amazonaws.com/'
