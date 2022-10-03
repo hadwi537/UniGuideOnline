@@ -1,5 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { Component } from 'react'
+import Table from './components/table'
 
 function App() {
   return (
