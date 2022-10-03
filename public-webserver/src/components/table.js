@@ -43,7 +43,7 @@ export default class Table extends React.Component {
     }
     render() {
         return (
-            <table style={{border: '1px solid black', margin_left: 'auto', margin_right: 'auto'}}>
+            <table style={{border: '1px solid black', margin: 'auto'}}>
                 <TableHeader />
                 <TableBody paperData = {this.state.reply} />
             </table>
