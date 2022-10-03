@@ -35,3 +35,9 @@ Create a new security group with:
 SSH traffic from myIP
 and HTTP and HTTPS traffic from internet 
 
+## public webserver
+
+To connect:
+connect using SSH:
+on the AWS management console, select `connect to instance` and follow the instructions to connect via SSH.
+Ensure that you specify the path to your `.pem`
