@@ -35,6 +35,14 @@ Create a new security group with:
 SSH traffic from myIP
 and HTTP and HTTPS traffic from internet 
 
+We need to add traffic on the 3000 port (where our react app is running)
+
+
+Go to the security group used for the ec2 instance and go to inbound rules. select edit inbound rules and add rule:
+Custom TCP, Port range 3000 and create rules for anywhere Ipv4 and IPv6.
+
+We can now access the app using http://ami:3000
+
 ## public webserver
 
 To connect:
