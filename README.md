@@ -41,3 +41,26 @@ To connect:
 connect using SSH:
 on the AWS management console, select `connect to instance` and follow the instructions to connect via SSH.
 Ensure that you specify the path to your `.pem`
+
+if this is the first time initalisation:
+Install git using 
+`sudo yum install git -y`
+
+Then clone this repository with
+`git clone https://github.com/hadwi537/HealthSciHelper.git`
+
+(use PAT to allow)
+
+To setup Node.js runtime: 
+run: 
+1) `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash`
+2) `. ~/.nvm/nvm.sh`
+3) `nvm install --lts`
+
+Check installed correctly with 
+`node -e "console.log('Running Node.js ' + process.version)`
+
+
+Then need to install the app using `npm install` while in the root dir of public-webserver
+
+We can then run npm-start and see page on localhost:3000
