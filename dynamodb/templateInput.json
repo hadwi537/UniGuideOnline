@@ -1,0 +1,29 @@
+{
+    "paper_code": {
+    "S": "MATH306"
+    }, 
+    "year": {
+        "S": "2022"
+    }, 
+    "title": {
+        "S": "Geometry of Curves and Surfaces"
+    }, 
+    "points": {
+        "N": "18" 
+    },
+    "teaching_period": {
+        "S": "S2" 
+    }, 
+    "subject": {
+        "S": "Mathematics"
+    }, 
+    "prereq_string": {
+        "S": "36 points at 200 level"
+    }, 
+    "prereq_list": {
+        "SS": ["MATH203", "MATH202"]
+    }, 
+    "dl_dict": {
+        "S": "none"
+    }
+}
