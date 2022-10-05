@@ -6,8 +6,14 @@ export default class Form extends Component {
     constructor () {
       super();
       this.state = {
-        email: '',
-        password: ''
+        paper_code: '',
+        year: '',
+        title: '',
+        points: '',
+        teaching_period: '',
+        subject: '',
+        prereq_string: '',
+        prereq_list: []
       };
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,11 +43,29 @@ export default class Form extends Component {
       return (
         <form onSubmit={this.handleSubmit}>
   
-          <label>Email</label>
-          <input type="text" name="email" onChange={this.handleChange} />
+          <label>Paper Code</label>
+          <input type="text" name="paper_code" onChange={this.handleChange} />
   
-          <label>Password</label>
-          <input type="password" name="password" onChange={this.handleChange} />
+          <label>Year</label>
+          <input type="text" name="year" onChange={this.handleChange} />
+
+          <label>Title</label>
+          <input type="text" name="title" onChange={this.handleChange} />
+
+          <label>Points</label>
+          <input type="text" name="points" onChange={this.handleChange} />
+
+          <label>Teaching Period</label>
+          <input type="text" name="teaching_period" onChange={this.handleChange} />
+
+          <label>subject</label>
+          <input type="text" name="subject" onChange={this.handleChange} />
+
+          <label>Pre-Requistes </label>
+          <input type="text" name="prereq_string" onChange={this.handleChange} />
+
+          <label>Prerequsite list</label>
+          <input type="password" name="prereq_list" onChange={this.handleChange} />
 
           <input type="submit" value="Submit"></input> 
         </form>

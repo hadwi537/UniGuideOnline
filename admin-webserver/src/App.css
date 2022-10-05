@@ -36,3 +36,22 @@
     transform: rotate(360deg);
   }
 }
+
+form {
+  overflow: hidden;
+}
+
+label {
+  float: left;
+  width: 200px;
+  padding-right: 24px;
+}
+
+input {
+  float: left;
+  width: calc(100% - 400px);
+}
+
+button {
+  width: calc(100%);
+}
