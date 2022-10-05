@@ -17,7 +17,7 @@ export default class Form extends Component {
       };
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
-      this.url = "https://ijo4298cse.execute-api.us-east-1.amazonaws.com" //update url
+      this.url = "https://ijo4298cse.execute-api.us-east-1.amazonaws.com"; //update url
     }
   
     handleChange (evt) {
@@ -26,10 +26,17 @@ export default class Form extends Component {
 
     handleSubmit = event => {
         const paper = {
-            email: this.state.email,
-            password: this.state.password
+            paper_code: this.state.paper_code,
+            year: this.state.year,
+            title: this.state.title,
+            points: this.state.points,
+            teaching_period: this.state.teaching_period,
+            subject: this.state.subject,
+            prereq_string: this.state.prereq_string,
+            prereq_list: this.state.prereq_list
         }
-        axios.post(`${this.url}/papers`, {paper})
+        console.log(paper)
+        axios.put(`${this.url}/papers`, paper)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -38,7 +45,6 @@ export default class Form extends Component {
         alert('Submission State: ' + JSON.stringify(this.state, null , 4));
         event.preventDefault();
     }
-  
     render () {
       return (
         <form onSubmit={this.handleSubmit}>
@@ -58,10 +64,10 @@ export default class Form extends Component {
           <label>Teaching Period</label>
           <input type="text" name="teaching_period" onChange={this.handleChange} />
 
-          <label>subject</label>
+          <label>Subject</label>
           <input type="text" name="subject" onChange={this.handleChange} />
 
-          <label>Pre-Requistes </label>
+          <label>Prerequsites </label>
           <input type="text" name="prereq_string" onChange={this.handleChange} />
 
           <label>Prerequsite list</label>

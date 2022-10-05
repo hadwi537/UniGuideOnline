@@ -41,9 +41,14 @@ exports.handler = async (event, context) => {
           .put({
             TableName: "paper_table",
             Item: {
-              id: requestJSON.id,
-              price: requestJSON.price,
-              name: requestJSON.name
+              paper_code: requestJSON.paper_code,
+              title: requestJSON.title,
+              year: requestJSON.year,
+              points: requestJSON.points,
+              teaching_period: requestJSON.teaching_period,
+              subject: requestJSON.subject,
+              prereq_string: requestJSON.prereq_string,
+              prereq_list: requestJSON.prereq_list
             }
           })
           .promise();
