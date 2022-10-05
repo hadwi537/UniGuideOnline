@@ -75,6 +75,22 @@ We can then run npm-start and see page on localhost:3000
 
 ### configuration of pm2
 
+First time install:
+use command: 
+npm install pm2@latest -g
+npm install -g serve
+
+then we need to create a build by running:
+npm run build 
+
+Then to run the webserver use:
+pm2 serve build 3000 --spa 
+
+To ensure it runs everyime on ec2 instance restart use
+(Note only need to do this on ec2 instance creation)
+pm2 startup
+Then copy and past the command in the terminal
+
 ### development
 
 Lifecycle outline:
