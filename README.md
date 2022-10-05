@@ -73,9 +73,13 @@ Then need to install the app using `npm install` while in the root dir of public
 
 We can then run npm-start and see page on localhost:3000
 
+### configuration of pm2
+
 ### development
 
 Lifecycle outline:
 Make changes on local 
 Pull changes in ec2 instance
+If your IP changes, you'll need to update the ssh address in the securtiy group for specified ec2 instance
+
 recompile
