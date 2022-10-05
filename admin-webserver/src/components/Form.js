@@ -65,7 +65,7 @@ export default class Form extends Component {
           <input type="text" name="prereq_string" onChange={this.handleChange} />
 
           <label>Prerequsite list</label>
-          <input type="password" name="prereq_list" onChange={this.handleChange} />
+          <input type="text" name="prereq_list" onChange={this.handleChange} />
 
           <input type="submit" value="Submit"></input> 
         </form>
