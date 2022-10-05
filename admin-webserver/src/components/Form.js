@@ -66,7 +66,7 @@ export default class Form extends Component {
 
           <label>Prerequsite list</label>
           <input type="text" name="prereq_list" onChange={this.handleChange} />
-
+          <label>'</label>
           <input type="submit" value="Submit"></input> 
         </form>
       );
