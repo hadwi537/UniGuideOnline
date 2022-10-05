@@ -55,7 +55,7 @@ Install git using
 `sudo yum install git -y`
 
 Then clone this repository with
-`git clone https://github.com/hadwi537/HealthSciHelper.git`
+`git clone https://github.com/hadwi537/UniGuideOnline.git`
 
 (use PAT to allow)
 
@@ -66,7 +66,7 @@ run:
 3) `nvm install --lts`
 
 Check installed correctly with 
-`node -e "console.log('Running Node.js ' + process.version)`
+`node -e "console.log('Running Node.js ' + process.version)"`
 
 
 Then need to install the app using `npm install` while in the root dir of public-webserver
@@ -86,7 +86,7 @@ npm run build
 Then to run the webserver use:
 pm2 serve build 3000 --spa 
 
-To ensure it runs everyime on ec2 instance restart use
+To ensure it runs on ec2 instance restart use
 (Note only need to do this on ec2 instance creation)
 pm2 startup
 Then copy and past the command in the terminal
