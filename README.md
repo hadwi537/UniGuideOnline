@@ -99,3 +99,7 @@ Pull changes in ec2 instance
 If your IP changes, you'll need to update the ssh address in the securtiy group for specified ec2 instance
 
 recompile
+
+## TODO:
+
+Bug: if don;t use a list for prerequistes, it crashes
