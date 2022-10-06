@@ -95,10 +95,9 @@ Then copy and past the command in the terminal
 
 Lifecycle outline:
 Make changes on local 
-Pull changes in ec2 instance
+Pull changes in ec2 instance (need to npm install , npm run build, pm2 stop all, pm2 serve build 3000 --spa again after)
 If your IP changes, you'll need to update the ssh address in the securtiy group for specified ec2 instance
 
 recompile
 
 ## TODO:
-
