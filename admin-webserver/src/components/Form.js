@@ -13,7 +13,7 @@ export default class Form extends Component {
         teaching_period: '',
         subject: '',
         prereq_string: '',
-        prereq_list: []
+        prereq_list: ''
       };
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
@@ -33,7 +33,7 @@ export default class Form extends Component {
             teaching_period: this.state.teaching_period,
             subject: this.state.subject,
             prereq_string: this.state.prereq_string,
-            prereq_list: this.state.prereq_list
+            prereq_list: this.state.prereq_list.split(",")
         }
         console.log(paper)
         axios.put(`${this.url}/papers`, paper)

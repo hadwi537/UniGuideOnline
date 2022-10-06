@@ -102,4 +102,3 @@ recompile
 
 ## TODO:
 
-Bug: if don;t use a list for prerequistes, it crashes
