@@ -23,7 +23,7 @@ To setup the webservers we first navigate to the EC2 console at https://us-east-
 
 Then we assign elastic IPs to the instances using the Elastic IPs tab under Network and Security. To do this, simply select `Allocate Elastic IP address` and assign each webserver to different Elastic IPs.
 
-Now connect to the webservers by following the instructions under $connect to instance$ and run the following sequence of commands. 
+Now connect to the webservers by following the instructions under `connect to instance` and run the following sequence of commands. 
 
 *  `sudo yum install git -y` to install git
 * `git clone https://github.com/hadwi537/UniGuideOnline.git` to install the application files (using a private access token if required).
