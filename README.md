@@ -19,7 +19,7 @@ After the aws-cli has installed, open your IDE of choice (I use Visual Studio Co
 
 #### Setup Webservers
 
-To setup the webservers we first navigate to the EC2 console at https://us-east-1.console.aws.amazon.com/ec2/ and select $launch instance$. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from myIP, HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the myIP reference will have to be updated periodically. 
+To setup the webservers we first navigate to the EC2 console at https://us-east-1.console.aws.amazon.com/ec2/ and select launch instance. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from myIP, HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the myIP reference will have to be updated periodically. 
 
 Then we assign elastic IPs to the instances using the Elastic IPs tab under Network and Security. To do this, simply select `Allocate Elastic IP address` and assign each webserver to different Elastic IPs.
 
@@ -61,10 +61,10 @@ We then create an HTTP API using API gateway. Navigate to the API Gateway consol
 
 Now select this API and choose `Routes` under `Develop`. For each route we defined in the lambda function, we add that route with the specified method. In this case: 
 
-* GET /papers/{id} $
-* GET /papers/$
-* PUT /items$
-* DELETE /items/{id}$
+* GET /papers/{id} 
+* GET /papers/
+* PUT /items
+* DELETE /items/{id}
 
 Now select `Integrations` and assign the lambda api created in the previous step to every route.
 
@@ -103,9 +103,9 @@ Upon making a change simply rebuild and push the image to ECR using the steps de
 ### Estimated costs of cloud services
 The estimated running costs are detailed below.
 
-In idle conditions, the monthly cost is about $31.55$
+In idle conditions, the monthly cost is about $31.55 NZD.
 
-With light use, the monthly cost is about $41.38$ where the majority of the cost comes from the DynamoDB database.
+With light use, the monthly cost is about $41.38 NZD, where the majority of the cost comes from the DynamoDB database.
 
 ## Next steps 
 
