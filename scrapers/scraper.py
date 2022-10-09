@@ -2,7 +2,6 @@ import requests
 from html.parser import HTMLParser
 import pandas as pd
 from bs4 import BeautifulSoup
-from connect_to_mongo_db import connect_to_mongo_db
 import re
 
 def scrape():
@@ -110,5 +109,3 @@ def scrape():
         if (len(paper_list) > 40):
             break
     return paper_list
-
-
