@@ -97,7 +97,8 @@ def scrape():
                     except:
                         pass
 
-                    # for mongodb get rid of paper =
+                    print(paper_list)
+
                     paper_list.append({'paper_code': row.Paper_code, 'year': row.Year, 'title': row.Title, 'points': row.Points, 'teaching_period': row.Teaching_period, 
                     'subject': subject, 'prereq_string': prereq, 'prereq_list': prereq_list, 'dl_dict': dl_dict})
 
