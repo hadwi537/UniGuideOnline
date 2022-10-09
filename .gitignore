@@ -4,3 +4,4 @@
 *.log
 *.gz
 .vscode/ltex.dictionary.en-US.txt
+scrapers/package
