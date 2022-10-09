@@ -25,7 +25,9 @@ There are two webservers, installed on EC2 instances that both host React applic
 \begin{figure}
     \caption{Diagram of application architecture.}
     \label{fig: application_architecutre}
-    % \includegraphics[]{} 
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{../docs-assets/AWS architecture.jpg}
+    \end{center} 
 \end{figure}
 
 % ec2 instances 
@@ -156,7 +158,7 @@ New API routes can be created by following the steps detailed in the setup secti
 
 \subsubsection{Scraper}
 
-Upon making a change simply rebuild and push the image to ECR using the steps described above. Everything else will take care of itself.
+Upon making a change simply rebuild and push the image to ECR using the steps described above. Then update the Lambda function image by using the $Deploy new image button$ and selecting the latest image.
 
 \section{Estimated costs of cloud services}
 % estimation of running costs
@@ -176,11 +178,11 @@ The application is designed to be used by a client through a web interface. User
 \section{Development story}
 
 % terraform 
-I initally attempted to use terraform in order to automatically provision my resourecs as I figured that this would ultimetly be an easier way to work.
+I initially attempted to use terraform in order to automatically provision my resourecs as I figured that this would ultimately be an easier way to work.
 However, I was defeated by the IAM role that had to be assigned to lambda function resources would lead t me being either locked out of certain functionality (i.e I couldn't see my functions on the AWS GUI) and to terraform destroy failing because the IAM user couldn't be deleted with it.
 
 %ec2 
-Creating the ec2 instances was relatively smooth. As with the last assignment, I used the React framework mostly because I was now familiar with its operation. While I decided to have a static webserver. It is reasbolanly easy to create a dynamic one using React so I felt this option left future development nicely open.
+Creating the ec2 instances was relatively smooth. As with the last assignment, I used the React framework mostly because I was now familiar with its operation. While I decided to have a static webserver. It is reasonably easy to create a dynamic one using React so I felt this option left future development nicely open.
 However, I did try and create a CI/CD pipeline to simplify the application lifecycle. However, AWS academy does not let you do this.
 
 %dynamoDB
