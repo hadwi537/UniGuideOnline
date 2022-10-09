@@ -34,7 +34,7 @@ Now connect to the webservers by following the instructions under `connect to in
 
 Now navigate to the root directory of the one of the webservers (public-webserver or admin-webserver) and run `npm install`.
 
-The respective app will now be available on localhost:3000 and from the given elastic IP at http://<elastic-ip>:3000.
+The respective app will now be available on localhost:3000 and from the given elastic IP at http://<'elastic-ip'>:3000.
 
 We now configure PM2 to automatically start the webservers and leave them running when the terminal is closed through the following commands.
 
@@ -46,9 +46,8 @@ We now configure PM2 to automatically start the webservers and leave them runnin
 
 #### Setup Backend
 
-First we need to initialize the backend DynamoDB database. To do this, first navigate to https://console.aws.amazon.com/dynamodb/ to bring up the DynamoDB interface. From here, we then create a table named `paper_table` with primary partition key `paper_code`. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
+First we need to initialize the backend DynamoDB database. To do this, first navigate to https://console.aws.amazon.com/dynamodb/ to bring up the DynamoDB interface. From here, we then create a table named `paper_table` with primary partition key `paper_code`. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. Below is detailed the `paper` entity that comprises the `paper_table` collection.
 
-The data
 ![alt text](https://github.com/hadwi537/UniGuideOnline/blob/master/docs-assets/paper_erd.PNG?raw=true)
 
 #### API setup
