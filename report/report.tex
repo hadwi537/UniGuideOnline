@@ -26,7 +26,7 @@ There are two webservers, installed on EC2 instances that both host React applic
     \caption{Diagram of application architecture.}
     \label{fig: application_architecutre}
     \begin{center}
-        \includegraphics[width=0.8\textwidth]{../docs-assets/AWS architecture.jpg}
+        \includegraphics[width=0.8\textwidth]{../docs-assets/AWS_architecture.jpg}
     \end{center} 
 \end{figure}
 
@@ -68,7 +68,7 @@ These steps detail the inital configurations required for first time setup.
 
 \subsubsection{Backend Setup}
 
-First we need to initialize the backend DynamoDB database. To do this, first navigate to $https://console.aws.amazon.com/dynamodb/$ to bring up the DynamoDB interface. From here, we then create a table named $paper_table$ with primary partition key $id$. Note that on once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
+First we need to initialize the backend DynamoDB database. To do this, first navigate to $https://console.aws.amazon.com/dynamodb/$ to bring up the DynamoDB interface. From here, we then create a table named $paper_table$ with primary partition key $paper_code$. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
 
 \subsubsection{Webserver setup}
 
@@ -107,11 +107,11 @@ We now configure PM2 to automatically start the webservers and leave them runnin
     
 \subsubsection{API Setup}
 
-First setup the lambda function by navigating to $https://console.aws.amazon.com/lambda$ and select $create function$. Let the function name be $crud-paper-function$, assign the exectuion role to $LabRole$ and ensure that the LabRole has the $Simple microservice permissions$.
+First setup the lambda function by navigating to $https://console.aws.amazon.com/lambda$ and select $create function$. Let the function name be $crud-paper-function$, assign the execution role to $LabRole$ and ensure that the LabRole has the $Simple microservice permissions$.
 
 Then copy and paste the index.js code in $lambda/index.js$ into the code on the management console and press deploy.
 
-We then create an HTTP API using API gateway. Navigate to the API Gateway console at $https://us-east-1.console.aws.amazon.com/apigateway/$ and choose $create API$ using the HTTP API blueprint. Use $crud-paper-api$ as the name and skip the remaming steps to create the API. 
+We then create an HTTP API using API gateway. Navigate to the API Gateway console at $https://us-east-1.console.aws.amazon.com/apigateway/$ and choose $create API$ using the HTTP API blueprint. Use $crud-paper-api$ as the name and skip the renaming steps to create the API. 
 
 Now select this API and choose $Routes$ under $Develop$. For each route we defined in the lambda function, we add that route with the specified method. In this case: 
 
@@ -128,7 +128,7 @@ Now select $Integrations$ and assign the lambda api created in the previous step
 
 First create an ECR repository from the console $https://us-east-1.console.aws.amazon.com/ecr/$ and name it scraper-2. To create the image use $docker build -t scraper .$ from the scraper directory. 
 
-Then, navigate to the lambda function console and create a lambda function in the usual way. Execept, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using $docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com$, tag the image with $docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$ and push it to ECR using $docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$. 
+Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using $docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com$, tag the image with $docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$ and push it to ECR using $docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$. 
 The create a Lambda function in the usual way from the console except that we select the $Container image$ option and select the uploaded image using its image URI. For example $426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest$ as it will always be the latest.
 
 \subsection{Development and Deployment}
