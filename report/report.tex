@@ -22,7 +22,7 @@
 \section{Application}
 \subsection{Architecture}
 
-This application follows the design principles of a 3-tier architecture. Namely, there are webservers that handle incoming client traffic and display page information, a backend database server for handling application specific data and an API that links them together. Furthermore, there is a serverless function that scrapes the University of Otago website updates the database \ref{fig: application_architecutre}.
+This application follows the design principles of a 3-tier architecture. Namely, there are webservers that handle incoming client traffic and display page information, a backend database server for handling application specific data and an API that links them together. Furthermore, there is a serverless function that scrapes the University of Otago website and updates the database \ref{fig: application_architecutre}.
 
 \begin{figure}[h!]
     \caption{Diagram of application architecture.}
@@ -32,23 +32,24 @@ This application follows the design principles of a 3-tier architecture. Namely,
     \end{center} 
 \end{figure}
 
-
-There are two webservers, installed on EC2 instances that both host React applications. One webserver (the public-webserver) takes care of displaying paper information in a dashboard like style which the other (admin-webserver) provides functionality for paper providers; for example, academics to create papers. The backend database is provisioned by DynamoDB, a managed NoSQL database provided by AWS. A CRUD API is then created using a combination of API Gateway which provides routes and endpoints, coupled with a lambda function that executes custom code in response to requests from the API Gateway. Finally, a lambda function is created that can scrape the University of Otago's website on request.
+There are two webservers installed on EC2 instances that both host React applications. One webserver (the public-webserver) takes care of displaying paper information in a dashboard like style which the other (admin-webserver) provides functionality for paper providers. For example, the ability for academics to create papers. The backend database is implimented by DynamoDB, a managed NoSQL database provided by AWS. A CRUD API is then created using a combination of API Gateway - which provides routes and endpoints - coupled with a lambda function that executes custom code in response to triggers from the API Gateway. Finally, a lambda function is created that can scrape the University of Otago's website on request.
 
 % ec2 instances 
 Each webserver is hosted on a customized EC2 instance. A key part of the design is splitting the two different user interactions - that of a paper viewer and paper administrator - onto separate virtual machines. The idea is that the traffic demands on either will almost certainly be different. For example, there are certainly more students than academics at regular universities. As such, we would expect the traffic on the user oriented webservers to be higher. Therefore, this separation of concerns allows more or less instances to be brought online in response to differential traffic/demand. This could be accomplished using a load balancer coupled with auto-scaling in the future. In essence, this separation makes it easy to tweak individual provisioning to match the demand. 
 Furthermore, anticipating this extension, both EC2 instances use pm2 software installed to automatically run their respective webservers on restart. 
 
-Each instance is also associated with an elastic IP. The idea here again relates to the load balancing with the operation of multiple instances where the elastic IPs can mask the failures of instances by instant remapping the address to other running instances. Furthermore, upon acquiring a domain name, this can ensure that the domain points to the instance(s).
+Each instance is also associated with an elastic IP. The idea here again relates to the load balancing with the operation of multiple instances where the elastic IPs can mask the failures of instances by instant remapping the address to other running instances. Furthermore, upon acquiring a domain name, this can ensure that the domain points to the webserver instance(s).
 
 % API
-The API is provisioned using a combination of an API Gateway and a lambda function. The key idea here is running code only on demand. In this instance, the API Gateway service is always visible and able to be accessed. However, the lambda function only runs the code required to accomplish the request when the endpoint is triggered, thereby saving money.   
+The API is provisioned using a combination of an API Gateway and a Lambda function. The key idea here is running code only on demand. In this instance, the API Gateway service is always visible and able to be accessed. However, the Lambda function only runs the code required to accomplish the request when the endpoint is triggered, thereby saving uptime and thus cost.   
 
 %Scrapers
 The scrapers are provided through a Lambda function. A custom image is uploaded to an ECR repository that is then loaded by the Lambda function as its base image. This image is created through the use of Docker. However, this function is only able to be triggered manually from the console. In this way, the scrapers are only run when it makes sense to do so and only charged for exactly this time.
 
 % Database
 The database backend is provided by the DynamoDB service. This service greatly simplifies the backend logic since AWS takes care of all the particulars. Thus, all that is required is the correct triggering of the provided API. 
+
+\pagebreak
 
 \subsection{Data Model}
 The database consists of a single collection named papers whose definition is given in \ref{fig: paper_data_model}.
@@ -61,11 +62,9 @@ The database consists of a single collection named papers whose definition is gi
     \end{center}
 \end{figure}
 
-Note that the paper objects can refer to other paper objects. In this case, I opted for a NoSQL database because it more easily links with the graph structure I wanted to accomplish with the paper structures. While some recent RDBMSs do offer tree structures without significant slowdown, I determined that in this case, with the small workload I am anticipating, it is simply easier and less logically intense to use a simple document oriented NoSQL database.
+Note that the paper objects can refer to other paper objects. In this case, I opted for a NoSQL database because it more easily links with the graph structure I wanted to accomplish with the paper structures. While some recent RDBMSs do offer tree structures without significant slowdown, with the small workload I am anticipating, it is simply easier and less logically intense to use a simple document oriented NoSQL database.
 
 \section{Lifecycles}
-
-This details the application lifecycle. Note that separate instructions are provided for starting the application from the AWS learner lab. 
 
 \subsection{Initial setup}
 
@@ -78,7 +77,8 @@ We then create a table named 'paper\_table' with primary partition key 'paper\_c
 
 \subsubsection{Webserver setup}
 
-To setup the webservers we first navigate to the EC2 console at https://us-east-1.console.aws.amazon.com/ec2/ and select 'launch instance'. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from 'myIP', HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the 'myIP' reference will have to be updated periodically. 
+To setup the webservers we first navigate to the EC2 console at \newline
+https://us-east-1.console.aws.amazon.com/ec2/ and select 'launch instance'. Choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair for authentication purposes. Then create a new security group that allows SSH traffic from 'myIP' and HTTP, HTTPS and custom TCP connections from the internet on port 3000 for IPv4/IPv6. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the 'myIP' reference will have to be updated periodically. 
 
 Then we assign elastic IPs to the instances using the 'Elastic IPs' tab under 'Network and Security'. To do this, simply select 'Allocate Elastic IP address' and assign each webserver to different Elastic IPs.
 
@@ -98,7 +98,7 @@ Now connect to the webservers by following the instructions under 'connect to in
 
 Now navigate to the root directory of the one of the webservers (public-webserver or admin-webserver) and run 'npm install'.
 
-The respective app will now be available on localhost:3000 and from the given elastic IP at 'http://<elastic-ip>:3000'.
+The respective app will now be available on localhost:3000 and from the given elastic IP at 'http://$<elastic-ip>$:3000'.
 
 We now configure PM2 to automatically start the webservers and leave them running when the terminal is closed through the following commands.
 
@@ -132,18 +132,21 @@ Now select $Integrations$ and assign the lambda api created in the previous step
 
 \subsubsection{Scraper setup}
 
-First create an ECR repository from the console https://us-east-1.console.aws.amazon.com/ecr/ and name it $scraper-2$. To create the image use 'docker build -t scraper' . from the scraper directory. 
+First create an ECR repository from the console \newline https://us-east-1.console.aws.amazon.com/ecr/ and name it $scraper-2$. To create the image use 'docker build -t scraper' . from the scraper directory. 
 
-Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using 
-'docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com', 
-tag the image with 
-'docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' and push it to ECR using 
-'docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2'. 
-Then create a Lambda function in the usual way from the console except that we select the $Container image$ option and select the uploaded image using its image URI. For example '426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest' as it will always have the latest image tag.
+Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then execute the following commands.
+
+\begin{itemize}
+    \item 'docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com' to login through docker.
+    \item 'docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' to tag the image.
+    \item 'docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' to push to ECR
+\end{itemize}
+
+Then create a Lambda function in the usual way from the console except that we select the 'Container image' option and select the uploaded image using its image URI. For example '426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest'.
 
 \subsection{Development and Deployment}
 
-As stated earlier, the DynamoDB requires no further modification. Unless, a more compute intensive option is desired.
+As stated earlier, the DynamoDB requires no further modification unless, a more compute intensive option is desired.
 
 In general, I personally recommend making changes locally. For example, since we are using a React web framework, the webservers can be run from the command line using npm-start where changes to the code can be instantly applied by simply saving the project. 
 
@@ -174,11 +177,11 @@ Upon making a change simply rebuild and push the image to ECR using the steps de
 % estimation of running costs
 The estimated running costs are detailed below.
 
-% idle
-In idle conditions, the monthly cost is about $\$31.55$
+\begin{itemize}
+    \item In idle conditions, the monthly cost is about $\$31.55$
+    \item With light use, the monthly cost is about $\$41.38$ where the majority of the cost comes from the DynamoDB database.
+\end{itemize}
 
-% with light use
-With light use, the monthly cost is about $\$41.38$ where the majority of the cost comes from the DynamoDB database.
 
 \section{User Interaction}
 
@@ -189,19 +192,19 @@ The application is designed to be used by a client through a web interface. User
 
 % terraform 
 I initially attempted to use terraform in order to automatically provision my resourecs as I figured that this would ultimately be an easier way to work.
-However, I was defeated by the IAM role that had to be assigned to lambda function resources would lead t me being either locked out of certain functionality (i.e I couldn't see my functions on the AWS GUI) and to terraform destroy failing because the IAM user couldn't be deleted with it.
+However, I was defeated by the IAM role that had to be assigned to lambda function resources would lead to me being either locked out of certain functionality (i.e I couldn't see my functions on the AWS GUI) and to terraform destroy failing because the IAM user couldn't be deleted with it.
 
 %ec2 
-Creating the ec2 instances was relatively smooth. As with the last assignment, I used the React framework mostly because I was now familiar with its operation. While I decided to have a static webserver. It is reasonably easy to create a dynamic one using React so I felt this option left future development nicely open.
-However, I did try and create a CI/CD pipeline to simplify the application lifecycle. However, AWS academy does not let you do this.
+Creating the ec2 instances was relatively smooth. As with the last assignment, I used the React framework mostly because I was now familiar with its operation. While I opted for a static webpage, It is reasonably easy to create a dynamic one using React so I felt this option left future extensions possible.
+However, I did try and create a CI/CD pipeline to simplify the application lifecycle. Unfortunaetly, AWS academy does not let you do create such pipelines.
 
 %dynamoDB
-I then decided to use DynamoDB primarily because the previous app this is based off was setup to function with a NoSQL database. Furthermore, I found it a bit simpler to interact with from the context of a lambda function than the RDBMS offering.
+I then decided to use DynamoDB primarily because the previous app this is based off was setup to function with a NoSQL database. Furthermore, I found it a bit simpler to interact with from the context of a Lambda function than the RDBMS offering.
 
 %API
 Clearly I was always going to need a nice way to interact with the different components. I decided to have a serverless function so that I didn't have to run another virtual machine which would be both expensive, slow and difficult to maintain (especially without CI/CD).
 
-Finally, I decided to include the scrapers in the application after all. My initial thought was to again use serverless functions because, logically, it maps well to think of the scrapers like a function that gets executed at some time. Furthermore, it saves money compared to running EC2 instances.
+Finally, I decided to include the scrapers in the application. My initial thought was to again use serverless functions because, logically, it maps well to think of the scrapers like a function that gets executed at some time. Furthermore, it is far more cost effective than running EC2 instances.
 
 % eventual outcome
 
@@ -211,7 +214,7 @@ Finally, I decided to include the scrapers in the application after all. My init
 The first thing I would like to do would be to use CI/CD. This would allow changes to the code to be transferred to production in a structured and careful manner, saving the issue of having to manually pull from EC2 instances on code changes. However, this is not possible with learner lab so this would require a personal account.
 
 % Authorization control/user accounts for managing data
-On the website end, I would like to implement the creation of user accounts such that the privileges for interacting with resources (such as papers) can be restricted, so only their owners can interact with them. Therefore, it follows that I would also like to add some href system such that both webserver types are connected through an authentication dialog. 
+On the website end, I would like to implement the creation of user accounts such that the privileges for interacting with resources (such as papers) can be restricted, so only their owners can interact with them. Therefore, it follows that I would also like to add some 'href' system such that both webserver types are connected through an authentication dialog. 
 
 % cloud front network
 In order to allow this application to properly scale, I would like to implement a CDN and load balancing services in order to balance the demands of user interaction through modifying the number of webserver instances as this would greatly increase the reliability of the application. 

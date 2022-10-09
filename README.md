@@ -69,10 +69,15 @@ Now select `Integrations` and assign the lambda api created in the previous step
 
 #### Scraper setup
 
-First create an ECR repository from the console https://us-east-1.console.aws.amazon.com/ecr/ and name it scraper-2. To create the image use `docker build -t scraper .` from the scraper directory. 
+First create an ECR repository from the console https://us-east-1.console.aws.amazon.com/ecr/ and name it 'scraper-2'. To create the image use 'docker build -t scraper' . from the scraper directory. 
 
-Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using `docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com`, tag the image with `docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2` and push it to ECR using `docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2`. 
-The create a Lambda function in the usual way from the console except that we select the `Container image` option and select the uploaded image using its image URI. For example `426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest` as it will always be the latest.
+Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then execute the following commands.
+
+* 'docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com' to login through docker.
+* 'docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' to tag the image.
+* 'docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' to push to ECR
+
+Then create a Lambda function in the usual way from the console except that we select the 'Container image' option and select the uploaded image using its image URI. For example '426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest'.
 ### Development & Deployment
 
 As stated earlier, the DynamoDB requires no further modification. Unless, a more compute intensive option is desired.
@@ -124,6 +129,7 @@ With light use, the monthly cost is about $41.38 NZD, where the majority of the 
 * Lambda: AWS serverless functions.
 * DynamoDB: AWS managed NoSQL database.
 * ECR: AWS image repository.
+* Docker: For creating images.
 
 ## Author
 
