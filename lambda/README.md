@@ -6,7 +6,7 @@ This lambda function is triggered by a request from an API gateway.
 
 This guides you through setting up the lambda, API gateway and DynamoDB integration. 
 
-First setup the lambda function by going to  https://console.aws.amazon.com/lambda and press create a new function.
+First setup the lambda function by going to https://console.aws.amazon.com/lambda and press create a new function.
 
 Let the function name be crud-paper-function
 and the execution role be `LabRole`

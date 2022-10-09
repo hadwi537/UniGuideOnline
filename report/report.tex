@@ -15,16 +15,8 @@
 
 \maketitle
 
-\section*{Introduction}
-
-% motivation 
-
-% idea (what is the app)
-
-%bit about aws 
-
-\section*{Application}
-\section{Architecture}
+\section{Application}
+\subsection{Architecture}
 
 This application follows the design principles of a 3-tier architecture. Namely, there are webservers that handle incoming client traffic and display page information, a backend database server for handling application specific data and an API that links them together.
 
@@ -37,7 +29,7 @@ There are two webservers, installed on EC2 instances that both host React applic
 \end{figure}
 
 % ec2 instances 
-Each webserver is hosted on a customized EC2 instance. A key part of the design is splitting the two different user interactions - that of a paper viewer and paper administrator - onto separate virtual machines. The idea is that the traffic demands on either will almost certainly be different. For example, there are certainly more students than academics at regular universities. As such, we would expect the traffic on the user oriented webservers to be higher. Therefore, this separation of concerns allows more or less instances to be brought online in response to differential traffic/demand. This could be accomplished using a load balancer in the future. In essence, this separation makes it easy to tweak individual provisioning to match the demand. 
+Each webserver is hosted on a customized EC2 instance. A key part of the design is splitting the two different user interactions - that of a paper viewer and paper administrator - onto separate virtual machines. The idea is that the traffic demands on either will almost certainly be different. For example, there are certainly more students than academics at regular universities. As such, we would expect the traffic on the user oriented webservers to be higher. Therefore, this separation of concerns allows more or less instances to be brought online in response to differential traffic/demand. This could be accomplished using a load balancer coupled with auto-scaling in the future. In essence, this separation makes it easy to tweak individual provisioning to match the demand. 
 Furthermore, anticipating this extension, both EC2 instances use pm2 software installed to automatically run their respective webservers on restart. 
 
 Each instance is also associated with an elastic IP. The idea here again relates to the load balancing with the operation of multiple instances where the elastic IPs can mask the failures of instances by instant remapping the address to other running instances. Furthermore, upon acquiring a domain name, this can ensure that the domain points to the instance(s).
@@ -48,7 +40,7 @@ The API is provisioned using a combination of an API Gateway and a lambda functi
 % Database
 The database backend is provided by the DynamoDB service. This service greatly simplifies the backend logic since AWS takes care of all the particulars. Thus, all that is required is the correct triggering of the provided API. 
 
-\section{Data Model}
+\subsection{Data Model}
 The database consists of a single collection named papers.
 
 \begin{figure}
@@ -61,44 +53,132 @@ The database consists of a single collection named papers.
 
 Note that the paper objects can refer to other paper objects. In this case, I opted for a NoSQL database because it more easily links with the graph structure I wanted to accomplish with the paper structures. While some recent RDBMSs do offer tree structures without significant slowdown, I determined that in this case, with the small workload I am anticipating, it is simply easier and less logically intense to use a simple document oriented NoSQL database.
 
-\section*{LifeCycles}
+\section{Lifecycles}
 
-\section{Initial setup}
+This details the application lifecycle. Note that separate instructions are provided for starting the application from the AWS learner lab. 
 
-\section{Development}
+\subsection{Initial setup}
 
-\section*{Estimated costs of cloud services}
-\section*{User Interaction}
+These steps detail the inital configurations required for first time setup.
 
-\section*{Development story}
+\subsubsection{Backend Setup}
+
+First we need to initialize the backend DynamoDB database. To do this, first navigate to $https://console.aws.amazon.com/dynamodb/$ to bring up the DynamoDB interface. From here, we then create a table named $paper_table$ with primary partition key $id$. Note that on once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
+
+\subsubsection{Webserver setup}
+
+To setup the webservers we first navigate to the EC2 console at $https://us-east-1.console.aws.amazon.com/ec2/$ and select $launch instance$. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from $myIP$, HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the $myIP$ reference will have to be updated periodically. 
+
+Then we assign elastic IPs to the instances using the $Elastic IPs$ tab under $Network and Security$. To do this, simply select $Allocate Elastic IP address$ and assign each webserver to different Elastic IPs.
+
+Now connect to the webservers by following the instructions under $connect to instance$ and run the following sequence of commands. 
+
+\begin{enumerate}
+    \item $sudo yum install git -y$ to install git
+    \item $git clone https://github.com/hadwi537/UniGuideOnline.git$ to install the application files (using a private access token if required).
+    \item Setup Node.js runtime
+    \begin{enumerate}
+        \item $curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash$
+        \item $. ~/.nvm/nvm.sh$
+        \item $nvm install --lts$
+        \item $node -e "console.log('Running Node.js ' + process.version)$ to verify installation.
+    \end{enumerate}
+\end{enumerate}
+
+Now navigate to the root directory of the one of the webservers (public-webserver or admin-webserver) and run $npm install$.
+
+The respective app will now be available on localhost:3000 and from the given elastic IP at $http://<elastic-ip>:3000$.
+
+We now configure PM2 to automatically start the webservers and leave them running when the terminal is closed through the following commands.
+
+\begin{enumerate}
+    \item $npm install pm2@latest -g$
+    \item $npm install -g serve$
+    \item $npm run build$ (from the root directory of a webserver)
+    \item $pm2 serve build 3000 --spa$
+    \item copy and paste the output of $pm2 startup$ and run it.
+
+\end{enumerate}
+    
+\subsubsection{API Setup}
+
+First setup the lambda function by navigating to $https://console.aws.amazon.com/lambda$ and select $create function$. Let the function name be $crud-paper-function$, assign the exectuion role to $LabRole$ and ensure that the LabRole has the $Simple microservice permissions$.
+
+Then copy and paste the index.js code in $lambda/index.js$ into the code on the management console and press deploy.
+
+We then create an HTTP API using API gateway. Navigate to the API Gateway console at $https://us-east-1.console.aws.amazon.com/apigateway/$ and choose $create API$ using the HTTP API blueprint. Use $crud-paper-api$ as the name and skip the remaming steps to create the API. 
+
+Now select this API and choose $Routes$ under $Develop$. For each route we defined in the lambda function, we add that route with the specified method. In this case: 
+
+\begin{itemize}
+    \item $GET /papers/{id} $
+    \item $GET /papers/$
+    \item $PUT /items$
+    \item $DELETE /items/{id}$
+\end{itemize}
+
+Now select $Integrations$ and assign the lambda api created in the previous step to every route.
+
+\subsection{Development and Deployment}
+
+As stated earlier, the DynamoDB requires no further modification. Unless, a more compute intensive option is desired.
+
+In general, I personally recommend making changes locally. For example, since we are using a React web framework, the webservers can be run from the command line using npm-start where changes to the code can be instantly applied by simply saving the project. 
+
+\subsubsection{Webservers}
+
+Assuming that changes have been made and pushed to remote, connect to the ec2 instance hosting the changed webserver. Then, perform the following steps.
+
+\begin{enumerate}
+    \item $git pull$
+    \item $npm install$ from the root directory of the modified webserver.
+    \item $npm run build$,
+    \item $pm2 stop all$
+    \item $pm2 serve build 3000 --spa$ 
+    \item copy and paste the output of $pm2 startup$ and run it in the terminal.
+\end{enumerate}
+
+\subsubsection{API}
+
+For updating the lambda function, navigate to the Lambda function console and copy and paste in the changes.
+
+New API routes can be created by following the steps detailed in the setup section.
+
+\section{Estimated costs of cloud services}
+% estimation of running costs
+The estimated running costs are detailed below.
+
+% idle
+In idle conditions, the monthly cost is about $31.55$
+
+% with light use
+With light use, the monthly cost is about $41.38$ where the majority of the cost comes from the DynamoDB databsae.
+
+\section{User Interaction}
+
+The application is designed to be used by a client through a web interface. Users can either view paper data visualizations or create papers through the website interface. 
+
+
+\section{Development story}
 
 % terraform 
-Spent a lot of time trying to get to work.
-Basically was defeated by the IAM role that had to be assigned to certain resources would lead t me being either locked out of certain functionality (i.e I couldn't see my functions on the AWS GUI) and to terraform destroy failing because the IAM user couldn't be deleted with it.
+I initally attempted to use terraform in order to automatically provision my resourecs as I figured that this would ultimetly be an easier way to work.
+However, I was defeated by the IAM role that had to be assigned to lambda function resources would lead t me being either locked out of certain functionality (i.e I couldn't see my functions on the AWS GUI) and to terraform destroy failing because the IAM user couldn't be deleted with it.
 
-(The lambda function required an execution role)
 %ec2 
+Creating the ec2 instances was relatively smooth. As with the last assignment, I used the React framework mostly because I was now familiar with its operation. While I decided to have a static webserver. It is reasbolanly easy to create a dynamic one using React so I felt this option left future development nicely open.
+However, I did try and create a CI/CD pipeline to simplify the application lifecycle. However, AWS academy does not let you do this.
 
+%dynamoDB
+I then decieded to use DynamoDB primarily because the previous app this is based off was setup to function with a NoSQL database. Furthermore, I found it a bit simpler to interact with from the context of a lambda function than the RDBMS offering.
 
 %API
-Clearly I was always going to need a nice way to interact with the different components. I decided to have a serverless function so that I didn't have to run another virtual machine which would be both expensive, slow and difficult to maintain (especiialy without CI/CD)
-
-% CI/CD
-Would make the startup and development some much faster and nicer. However, learner labs don't support it
+Clearly I was always going to need a nice way to interact with the different components. I decided to have a serverless function so that I didn't have to run another virtual machine which would be both expensive, slow and difficult to maintain (especially without CI/CD)
 
 
 % eventual outcome
 
-
-\section*{Cloud specific information}
-
-% estimation of running costs
-
-% idle
-
-% with light use
-
-\section*{Future improvements}
+\section{Future improvements}
 
 % CI/CD
 Not possible with learner lab so would need own account but would make this application x100 better
@@ -110,11 +190,12 @@ Creation of user accounts such that the privileges for interacting with resource
 Use of a CDN and load balancing would increase the reliability of the app and allow it to scale out 
 
 % terraform
-Would like to have another go at this but again, doens't really work with learner lab
+Would like to have another go at this but again, does not work with learner lab
 
 % connect the two togehter with references 
-Href into either through a authenication/user dialog to better increase the app 
+Href into either through authentication/user dialog to better increase the app 
 
 % inclusion of scrapers
+
 
 \end{document}
