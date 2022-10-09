@@ -37,6 +37,9 @@ Each instance is also associated with an elastic IP. The idea here again relates
 % API
 The API is provisioned using a combination of an API Gateway and a lambda function. The key idea here is running code only on demand. In this instance, the API Gateway service is always visible and able to be accessed. However, the lambda function only runs the code required to accomplish the request when the endpoint is triggered, thereby saving money.   
 
+%Scrapers 
+ECR container registry lambda function, docker madness.
+
 % Database
 The database backend is provided by the DynamoDB service. This service greatly simplifies the backend logic since AWS takes care of all the particulars. Thus, all that is required is the correct triggering of the provided API. 
 
@@ -119,6 +122,10 @@ Now select this API and choose $Routes$ under $Develop$. For each route we defin
 
 Now select $Integrations$ and assign the lambda api created in the previous step to every route.
 
+\subsubsection{Scraper setup}
+
+Bit about this setup
+
 \subsection{Development and Deployment}
 
 As stated earlier, the DynamoDB requires no further modification. Unless, a more compute intensive option is desired.
@@ -143,6 +150,10 @@ Assuming that changes have been made and pushed to remote, connect to the ec2 in
 For updating the lambda function, navigate to the Lambda function console and copy and paste in the changes.
 
 New API routes can be created by following the steps detailed in the setup section.
+
+\subsubsection{Scraper}
+
+But about the scraper section 
 
 \section{Estimated costs of cloud services}
 % estimation of running costs
