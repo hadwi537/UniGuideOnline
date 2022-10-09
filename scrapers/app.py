@@ -14,7 +14,10 @@ def handler(event, context):
         print(paper['paper_code'])
         print(f'putting ${paper} into table')
         parse_nums = "[0-9]+"
-        paper['points'] = int(re.match(parse_nums, paper['points']).group(0))
+        paper['points'] = re.match(parse_nums, paper['points']).group(0)
+        if (len(paper['prereq_list']) == 0):
+            paper['prereq_list'] = ['']
+
         data = client.put_item( 
             TableName='paper_table', 
             Item = {
@@ -40,5 +43,6 @@ def handler(event, context):
                     'SS': paper['prereq_list']
                 }
             })
+        print(data)
     
     return "done"
