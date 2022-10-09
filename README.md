@@ -6,7 +6,8 @@ This application is fully hosted in the AWS cloud and follows a conventional 3-t
 
 ![alt text](https://github.com/hadwi537/UniGuideOnline/blob/master/docs-assets/AWS_architecture.jpg?raw=true)
 
-
+For a demonstration of the current app see:
+https://www.youtube.com/watch?v=KKSF3d44tFE
 ## Getting Started
 
 ### Prerequisites
