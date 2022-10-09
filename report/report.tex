@@ -6,6 +6,10 @@
 \usepackage{epstopdf}
 \usepackage{inputenc}
 \usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+
+
 \geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
 \begin{document}
 
@@ -18,17 +22,18 @@
 \section{Application}
 \subsection{Architecture}
 
-This application follows the design principles of a 3-tier architecture. Namely, there are webservers that handle incoming client traffic and display page information, a backend database server for handling application specific data and an API that links them together. Furthermore, there is a serverless function that scrapes the University of Otago website updates the database.
+This application follows the design principles of a 3-tier architecture. Namely, there are webservers that handle incoming client traffic and display page information, a backend database server for handling application specific data and an API that links them together. Furthermore, there is a serverless function that scrapes the University of Otago website updates the database \ref{fig: application_architecutre}.
 
-There are two webservers, installed on EC2 instances that both host React applications. One webserver (the public-webserver) takes care of displaying paper information in a dashboard like style which the other (admin-webserver) provides functionality for paper providers; for example, academics to create papers. The backend database is provisioned by DynamoDB, a managed NoSQL database provided by AWS. A CRUD API is then created using a combination of API Gateway which provides routes and endpoints, coupled with a lambda function that executes custom code in response to requests from the API Gateway. Finally, a lambda function is created that can scrape the University of Otago's website on request.
-
-\begin{figure}
+\begin{figure}[h!]
     \caption{Diagram of application architecture.}
     \label{fig: application_architecutre}
     \begin{center}
         \includegraphics[width=0.8\textwidth]{../docs-assets/AWS_architecture.jpg}
     \end{center} 
 \end{figure}
+
+
+There are two webservers, installed on EC2 instances that both host React applications. One webserver (the public-webserver) takes care of displaying paper information in a dashboard like style which the other (admin-webserver) provides functionality for paper providers; for example, academics to create papers. The backend database is provisioned by DynamoDB, a managed NoSQL database provided by AWS. A CRUD API is then created using a combination of API Gateway which provides routes and endpoints, coupled with a lambda function that executes custom code in response to requests from the API Gateway. Finally, a lambda function is created that can scrape the University of Otago's website on request.
 
 % ec2 instances 
 Each webserver is hosted on a customized EC2 instance. A key part of the design is splitting the two different user interactions - that of a paper viewer and paper administrator - onto separate virtual machines. The idea is that the traffic demands on either will almost certainly be different. For example, there are certainly more students than academics at regular universities. As such, we would expect the traffic on the user oriented webservers to be higher. Therefore, this separation of concerns allows more or less instances to be brought online in response to differential traffic/demand. This could be accomplished using a load balancer coupled with auto-scaling in the future. In essence, this separation makes it easy to tweak individual provisioning to match the demand. 
@@ -46,9 +51,9 @@ The scrapers are provided through a Lambda function. A custom image is uploaded 
 The database backend is provided by the DynamoDB service. This service greatly simplifies the backend logic since AWS takes care of all the particulars. Thus, all that is required is the correct triggering of the provided API. 
 
 \subsection{Data Model}
-The database consists of a single collection named papers.
+The database consists of a single collection named papers whose definition is given in \ref{fig: paper_data_model}.
 
-\begin{figure}
+\begin{figure}[h!]
     \caption{Paper collection data model.}
     \label{fig: paper_data_model}
     \begin{center}
@@ -68,50 +73,51 @@ These steps detail the inital configurations required for first time setup.
 
 \subsubsection{Backend Setup}
 
-First we need to initialize the backend DynamoDB database. To do this, first navigate to $https://console.aws.amazon.com/dynamodb/$ to bring up the DynamoDB interface. From here, we then create a table named $paper_table$ with primary partition key $paper_code$. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
+First we need to initialize the backend DynamoDB database. To do this, first navigate to https://console.aws.amazon.com/dynamodb/ to bring up the DynamoDB interface. 
+We then create a table named 'paper\_table' with primary partition key 'paper\_code'. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
 
 \subsubsection{Webserver setup}
 
-To setup the webservers we first navigate to the EC2 console at $https://us-east-1.console.aws.amazon.com/ec2/$ and select $launch instance$. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from $myIP$, HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the $myIP$ reference will have to be updated periodically. 
+To setup the webservers we first navigate to the EC2 console at https://us-east-1.console.aws.amazon.com/ec2/ and select 'launch instance'. First, choose the Amazon Linux 2 AMI with a t2.micro instance and a specified key pair. Then create a new security group that allows SSH traffic from 'myIP', HTTP, HTTPS and custom TCP connections on port 3000 for IPv4 and IPv6 from the internet. This ensures that web users can connect to the React webserver that runs on port 3000. Note that the 'myIP' reference will have to be updated periodically. 
 
-Then we assign elastic IPs to the instances using the $Elastic IPs$ tab under $Network and Security$. To do this, simply select $Allocate Elastic IP address$ and assign each webserver to different Elastic IPs.
+Then we assign elastic IPs to the instances using the 'Elastic IPs' tab under 'Network and Security'. To do this, simply select 'Allocate Elastic IP address' and assign each webserver to different Elastic IPs.
 
-Now connect to the webservers by following the instructions under $connect to instance$ and run the following sequence of commands. 
+Now connect to the webservers by following the instructions under 'connect to instance' and run the following sequence of commands. 
 
 \begin{enumerate}
-    \item $sudo yum install git -y$ to install git
-    \item $git clone https://github.com/hadwi537/UniGuideOnline.git$ to install the application files (using a private access token if required).
+    \item 'sudo yum install git -y' to install git.
+    \item 'git clone https://github.com/hadwi537/UniGuideOnline.git' to install the application files (using a private access token if required).
     \item Setup Node.js runtime
     \begin{enumerate}
-        \item $curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash$
-        \item $. ~/.nvm/nvm.sh$
-        \item $nvm install --lts$
-        \item $node -e "console.log('Running Node.js ' + process.version)$ to verify installation.
+        \item 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash'
+        \item '. ~/.nvm/nvm.sh'
+        \item 'nvm install --lts'
+        \item 'node -e "console.log('Running Node.js ' + process.version)' to verify installation.
     \end{enumerate}
 \end{enumerate}
 
-Now navigate to the root directory of the one of the webservers (public-webserver or admin-webserver) and run $npm install$.
+Now navigate to the root directory of the one of the webservers (public-webserver or admin-webserver) and run 'npm install'.
 
-The respective app will now be available on localhost:3000 and from the given elastic IP at $http://<elastic-ip>:3000$.
+The respective app will now be available on localhost:3000 and from the given elastic IP at 'http://<elastic-ip>:3000'.
 
 We now configure PM2 to automatically start the webservers and leave them running when the terminal is closed through the following commands.
 
 \begin{enumerate}
-    \item $npm install pm2@latest -g$
-    \item $npm install -g serve$
-    \item $npm run build$ (from the root directory of a webserver)
-    \item $pm2 serve build 3000 --spa$
-    \item copy and paste the output of $pm2 startup$ and run it.
+    \item 'npm install pm2@latest -g'
+    \item 'npm install -g serve'
+    \item 'npm run build' (from the root directory of a webserver)
+    \item 'pm2 serve build 3000 --spa'
+    \item copy and paste the output of 'pm2 startup' and run it.
 
 \end{enumerate}
     
 \subsubsection{API Setup}
 
-First setup the lambda function by navigating to $https://console.aws.amazon.com/lambda$ and select $create function$. Let the function name be $crud-paper-function$, assign the execution role to $LabRole$ and ensure that the LabRole has the $Simple microservice permissions$.
+First setup the lambda function by navigating to https://console.aws.amazon.com/lambda and select 'create function'. Let the function name be 'crud-paper-function', assign the execution role to $LabRole$ and ensure that the LabRole has the 'Simple microservice permissions'.
 
 Then copy and paste the index.js code in $lambda/index.js$ into the code on the management console and press deploy.
 
-We then create an HTTP API using API gateway. Navigate to the API Gateway console at $https://us-east-1.console.aws.amazon.com/apigateway/$ and choose $create API$ using the HTTP API blueprint. Use $crud-paper-api$ as the name and skip the renaming steps to create the API. 
+We then create an HTTP API using API gateway. Navigate to the API Gateway console at https://us-east-1.console.aws.amazon.com/apigateway/ and choose 'create API' using the HTTP API blueprint. Use 'crud-paper-api' as the name and skip the renaming steps to create the API. 
 
 Now select this API and choose $Routes$ under $Develop$. For each route we defined in the lambda function, we add that route with the specified method. In this case: 
 
@@ -126,10 +132,14 @@ Now select $Integrations$ and assign the lambda api created in the previous step
 
 \subsubsection{Scraper setup}
 
-First create an ECR repository from the console $https://us-east-1.console.aws.amazon.com/ecr/$ and name it scraper-2. To create the image use $docker build -t scraper .$ from the scraper directory. 
+First create an ECR repository from the console https://us-east-1.console.aws.amazon.com/ecr/ and name it $scraper-2$. To create the image use 'docker build -t scraper' . from the scraper directory. 
 
-Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using $docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com$, tag the image with $docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$ and push it to ECR using $docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2$. 
-The create a Lambda function in the usual way from the console except that we select the $Container image$ option and select the uploaded image using its image URI. For example $426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest$ as it will always be the latest.
+Then, navigate to the lambda function console and create a lambda function in the usual way. Except, in this case, choose the base image as the image residing in the ECR repository. Then login through docker using 
+'docker login -u AWS -p \$(aws ecr get-login-password --region us-east-1) 426627924972.dkr.ecr.us-east-1.amazonaws.com', 
+tag the image with 
+'docker tag scraper:latest 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2' and push it to ECR using 
+'docker push 426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2'. 
+Then create a Lambda function in the usual way from the console except that we select the $Container image$ option and select the uploaded image using its image URI. For example '426627924972.dkr.ecr.us-east-1.amazonaws.com/scraper-2:latest' as it will always have the latest image tag.
 
 \subsection{Development and Deployment}
 
@@ -142,12 +152,12 @@ In general, I personally recommend making changes locally. For example, since we
 Assuming that changes have been made and pushed to remote, connect to the ec2 instance hosting the changed webserver. Then, perform the following steps.
 
 \begin{enumerate}
-    \item $git pull$
-    \item $npm install$ from the root directory of the modified webserver.
-    \item $npm run build$,
-    \item $pm2 stop all$
-    \item $pm2 serve build 3000 --spa$ 
-    \item copy and paste the output of $pm2 startup$ and run it in the terminal.
+    \item 'git pull'
+    \item 'npm install' from the root directory of the modified webserver.
+    \item 'npm run build',
+    \item 'pm2 stop all'
+    \item 'pm2 serve build 3000 --spa' 
+    \item copy and paste the output of 'pm2 startup' and run it in the terminal.
 \end{enumerate}
 
 \subsubsection{API}
@@ -158,7 +168,7 @@ New API routes can be created by following the steps detailed in the setup secti
 
 \subsubsection{Scraper}
 
-Upon making a change simply rebuild and push the image to ECR using the steps described above. Then update the Lambda function image by using the $Deploy new image button$ and selecting the latest image.
+Upon making a change simply rebuild and push the image to ECR using the steps described above. Then update the Lambda function image by using the 'Deploy new image button' and selecting the latest image.
 
 \section{Estimated costs of cloud services}
 % estimation of running costs
