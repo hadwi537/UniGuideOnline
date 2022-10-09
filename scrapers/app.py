@@ -1,5 +1,6 @@
 import boto3
 from scraper import scrape
+import re
 
 client = boto3.client('dynamodb')
 
@@ -12,6 +13,8 @@ def handler(event, context):
         print("####\n" + str(paper) + "####\n")
         print(paper['paper_code'])
         print(f'putting ${paper} into table')
+        parse_nums = "[0-9]+"
+        paper['points'] = int(re.match(parse_nums, paper['points']).group(0))
         data = client.put_item( 
             TableName='paper_table', 
             Item = {
