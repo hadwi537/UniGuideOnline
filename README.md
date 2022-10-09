@@ -4,7 +4,7 @@ This project aims to better present the paper options at the University of Otago
 
 This application is fully hosted in the AWS cloud and follows a conventional 3-tier architecture. There are two virtual machines which host webservers written using the React framework. These webservers interact with a DynamoDB instance via an API composed of an API Gateway and lambda function to retrieve and insert paper information as shown below.
 
-![alt text](https://github.com/hadwi537/UniGuideOnline/blob/main/docs-assets/AWS_architecture.jpg?raw=true)
+![alt text](https://github.com/hadwi537/UniGuideOnline/blob/master/docs-assets/AWS_architecture.jpg?raw=true)
 
 
 ## Getting Started
@@ -49,7 +49,7 @@ We now configure PM2 to automatically start the webservers and leave them runnin
 First we need to initialize the backend DynamoDB database. To do this, first navigate to https://console.aws.amazon.com/dynamodb/ to bring up the DynamoDB interface. From here, we then create a table named `paper_table` with primary partition key `paper_code`. Note that once created, successive restarts of the AWS learner lab will restart the table automatically, so no further effort is required. 
 
 The data
-![alt text](https://github.com/hadwi537/UniGuideOnline/blob/main/docs-assets/paper_erd.PNG?raw=true)
+![alt text](https://github.com/hadwi537/UniGuideOnline/blob/master/docs-assets/paper_erd.PNG?raw=true)
 
 #### API setup
 
